@@ -146,7 +146,7 @@ See the [LICENSE](LICENSE) file for details.
 ---
 
 <div align="center">
-  <h2>🌴 LEONIDA</h2>
+  <h2>LEONIDA</h2>
   <p><strong>One Game. A New Platform. Unlimited Possibilities.</strong></p>
   <p>Built by the community, for the community.</p>
 </div>
