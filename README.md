@@ -1,7 +1,9 @@
-# Leonida — GTA VI PC Recompilation
-
 <div align="center">
-<img width="400" height="400" alt="image" src="images/logo.png" />
+  <h1>Leonida — GTA VI PC Recompilation</h1>
+<p align="center">
+  
+<div align="center">
+<img width="290" height="290" alt="image" src="images/logo.png" />
   <p><strong>Grand Theft Auto VI — Native PC Recompilation</strong></p>
 </div>
 <p align="center">
