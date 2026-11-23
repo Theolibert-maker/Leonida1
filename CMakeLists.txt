@@ -3,6 +3,8 @@ project(wordscope_native VERSION 1.0.0 LANGUAGES CXX)
 
 add_library(wordscope_native SHARED
     native/src/text_stats.cpp
+    native/src/utf8.cpp
+    native/src/hash.cpp
     native/src/bindings.cpp
 )
 

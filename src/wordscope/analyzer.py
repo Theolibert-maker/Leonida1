@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 from collections import Counter
+import hashlib
 from pathlib import Path
 import re
 from typing import Iterable
 
 from .native import NativeEngine
+from .text_loader import load_text
+from utils.file_utils import iter_files
 
 _WORD_RE = re.compile(r"[^\W_]+(?:['’][^\W_]+)?", re.UNICODE)
 
@@ -26,6 +29,8 @@ def analyze_text(text: str, engine: NativeEngine | None = None) -> dict:
     encoded = text.encode("utf-8")
     native_metrics = engine.measure(encoded)
     metrics = native_metrics or _python_metrics(text)
+    metrics.setdefault("fingerprint", hashlib.sha256(encoded).hexdigest()[:16])
+    metrics.setdefault("valid_utf8", True)
 
     # Python owns Unicode tokenization and frequency analysis.
     words = [match.group(0).casefold() for match in _WORD_RE.finditer(text)]
@@ -41,17 +46,9 @@ def analyze_text(text: str, engine: NativeEngine | None = None) -> dict:
 
 
 def analyze_file(path: Path, engine: NativeEngine | None = None) -> dict:
-    text = path.read_text(encoding="utf-8", errors="replace")
+    text = load_text(path)
     return {"path": str(path), **analyze_text(text, engine)}
 
 
 def discover_files(target: Path, recursive: bool = False) -> Iterable[Path]:
-    if target.is_file():
-        yield target
-    elif target.is_dir():
-        iterator = target.rglob("*") if recursive else target.iterdir()
-        for path in sorted(iterator):
-            if path.is_file():
-                yield path
-    else:
-        raise FileNotFoundError(f"Путь не найден: {target}")
+    yield from iter_files(target, recursive)

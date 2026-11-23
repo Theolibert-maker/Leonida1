@@ -4,9 +4,11 @@ import argparse
 from pathlib import Path
 import sys
 
-from .analyzer import analyze_file, discover_files
 from .native import NativeEngine
-from .report import render_text, write_json
+from .report import render_text
+from services.scan_service import scan_path
+from services.export_service import export_json
+from utils.validators import validate_top_count
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -17,30 +19,30 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("path", type=Path, help="Файл или каталог")
     parser.add_argument("-r", "--recursive", action="store_true", help="Обходить подкаталоги")
     parser.add_argument("--json", type=Path, metavar="FILE", help="Сохранить JSON-отчёт")
-    parser.add_argument("--top", type=int, default=8, help="Сколько частых слов показывать (по умолчанию: 8)")
+    parser.add_argument("--top", type=int, default=8, help="Сколько частых слов показывать")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    if args.top < 0:
-        print("--top не может быть отрицательным", file=sys.stderr)
-        return 2
-
     try:
+        validate_top_count(args.top)
         engine = NativeEngine()
-        files = list(discover_files(args.path, args.recursive))
-        results = [analyze_file(path, engine) for path in files]
+        results = scan_path(args.path, args.recursive, engine)
         for result in results:
             result["top_words"] = result["top_words"][:args.top]
 
         print(render_text(results))
         if args.json:
-            write_json(results, args.json)
-            print(f"\nJSON-отчёт сохранён: {args.json}")
+            destination = export_json(results, args.json)
+            print(f"\nJSON-отчёт сохранён: {destination}")
         if not engine.available:
-            print("\nПодсказка: соберите C++-модуль через CMake для нативного подсчёта метрик.")
+            print("\nПодсказка: соберите C++-модуль через CMake для нативных метрик.")
         return 0
-    except (OSError, UnicodeError, FileNotFoundError) as exc:
+    except (OSError, UnicodeError, ValueError) as exc:
         print(f"Ошибка: {exc}", file=sys.stderr)
         return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
