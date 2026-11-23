@@ -1,6 +1,6 @@
 <div align="center">
   <h1>Leonida — GTA VI PC Recompilation</h1>
-<p align="center">
+</div>
   
 <div align="center">
 <img width="290" height="290" alt="image" src="images/logo.png" />
